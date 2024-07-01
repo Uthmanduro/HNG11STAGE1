@@ -17,21 +17,29 @@ const getUserIp = (req) => {
         ipAddress = ipAddress.replace('::ffff:', '')
     }
 
-    console.log('ipAddress', ipAddress)
-
-    return ipAddress
+    return ipAddress ?? "102.89.23.242"
 }
 
 
 async function fetchLocation() {
     try {
+      const url = `https://api.geoapify.com/v1/ipinfo?apiKey=${process.env.LOCATION_API_KEY}`;
+      const response = await axios.get(url);
+      return (response.data.city.name); // Handle the response data
+    } catch (error) {
+      console.error('Error:', error); // Handle the error
+    }
+}
+
+
+async function fetchWeather(city) {
+    try {
     
-        const url = `http://api.weatherapi.com/v1/current.json?key=${process.env.WEATHER_API_KEY}&q=auto:ip&aqi=no`
+        const url = `http://api.weatherapi.com/v1/current.json?key=${process.env.WEATHER_API_KEY}&q=${city}&aqi=no`
         const res = await axios.get(url)
         const temp = res.data.current.temp_c;
-        const location = res.data.location.name;
 
-        return [temp, location];
+        return (temp);
 
     
     } catch (error) {
@@ -44,10 +52,12 @@ async function fetchLocation() {
 app.get("/api/hello/", async (req, res) => {
 
     let ip = getUserIp(req);
+    const location = await fetchLocation();
+
     const visitor_name = req.query.visitor_name || "anonymous";
-    const data = await fetchLocation()
-    const location = data[1];  
-    const temperature = data[0];
+    const temperature = await fetchWeather(location);
+      
+      
     res.send({
         "client_ip": ip, // The IP address of the requester
         "location": location, // The city of the requester
@@ -58,38 +68,4 @@ app.get("/api/hello/", async (req, res) => {
 app.listen(port, () => {
     console.log(`App is listening on port ${port}`)
 })
-
-
-
-
-
-
-
-
-
-
-// async function fetchWeather(location) {
-//     try {
-//         // const geocoding_url = `http://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=5&appid=${process.env.WEATHER_API_KEY}`
-        
-//         // const response = await axios.get(geocoding_url)
-//         // const lat = response.data[0].lat
-//         // const lon =  response.data[0].lon;
-
-//         // const weather_url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${process.env.WEATHER_API_KEY}`
-//         // const temp = await axios.get(weather_url);
-//         // return (temp.data.main.temp);
-
-        
-
-        
-//     } catch (error) {
-//         console.error('Error:', error); // Handle the error
-//     }
-// }
-
-
-//   const url = `https://api.geoapify.com/v1/ipinfo?apiKey=${process.env.LOCATION_API_KEY}`;
-    //   const response = await axios.get(url);
-    //   return (response.data.city.name); // Handle the response data
 
