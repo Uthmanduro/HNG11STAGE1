@@ -28,7 +28,11 @@ async function fetchLocation() {
 
 
 app.get("/api/hello/", async (req, res) => {
-    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;;
+    
+    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    if (ip.includes('::ffff:')) {
+        ip = ip.replace('::ffff:', '')
+    }
     const visitor_name = req.query.visitor_name || "anonymous";
     const data = await fetchLocation()
     const location = data[1];  
