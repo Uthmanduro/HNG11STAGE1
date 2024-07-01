@@ -27,7 +27,7 @@ async function fetchWeather(location) {
         const lat = response.data[0].lat
         const lon =  response.data[0].lon;
 
-        const weather_url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${process.env.WEATHER_API_KEY}`
+        const weather_url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${process.env.WEATHER_API_KEY}`
         const temp = await axios.get(weather_url);
         return (temp.data.main.temp);
         
