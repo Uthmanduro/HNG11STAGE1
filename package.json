@@ -4,7 +4,8 @@
   "description": "An api that uses a users name and IP to deterine the location and sends a response with format\r {\r   \"client_ip\": \"127.0.0.1\", // The IP address of the requester\r   \"location\": \"New York\" // The city of the requester\r   \"greeting\": \"Hello, Mark!, the temperature is 11 degrees Celcius in New York\"\r }",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
