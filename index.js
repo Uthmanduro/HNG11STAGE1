@@ -1,5 +1,6 @@
 const express = require("express");
 const axios = require("axios");
+const requestIp = require("request-ip");
 
 require('dotenv').config();
 
@@ -7,6 +8,19 @@ const app = express();
 const port = 8000;
 
 app.use(express.json());
+
+
+const getUserIp = (req) => {
+    let ipAddress = requestIp.getClientIp(req)
+
+    if (ipAddress.includes('::ffff:')) {
+        ipAddress = ipAddress.replace('::ffff:', '')
+    }
+
+    console.log('ipAddress', ipAddress)
+
+    return ipAddress
+}
 
 
 async function fetchLocation() {
@@ -28,11 +42,8 @@ async function fetchLocation() {
 
 
 app.get("/api/hello/", async (req, res) => {
-    
-    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    if (ip.includes('::ffff:')) {
-        ip = ip.replace('::ffff:', '')
-    }
+
+    let ip = getUserIp(req);
     const visitor_name = req.query.visitor_name || "anonymous";
     const data = await fetchLocation()
     const location = data[1];  
